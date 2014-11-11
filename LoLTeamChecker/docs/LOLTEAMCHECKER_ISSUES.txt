@@ -1,0 +1,221 @@
+Notes:
+===============================================================================
+Class differences/redundancies:
+----------------------------------
+This applies mainly to the new, smaller app: LoLTeamCheck
+
+Each class is meant to only work on its own data - i.e. I want to avoid 
+importing classes into other classes. 
+
+Current issue: Redundant references
+Classes: staticdata.py & rankeddata.py
+
+In order to get ranked data for a champ for a summoner, I could use, in my GUI:
+
+(1)
+idnum = GrabStaticSata.get_champid("Jarvan IV")
+stats = GrabRankedData.get_stats_by_id(idnum)
+
+OR, 
+(2)
+in GrabRankedData, I could sort the data from:
+stats = api_instance.get_ranked_stats_by_summoner_id(id)
+
+
+which comes as:
+a list in stats['champions'], with stats['champions'][0]['stats'] &
+stats['champions'][0]['id']
+
+into:
+new_stats['Jarvan IV'] with ['stats'] and ['id'] which means calling:
+GrabStaticData.get_champid(name) for each champ
+
+then use GrabRankedData.get_stats_by_name("Jarvan IV")
+
+===============================================================================
+Major Stuff:
+-------------------
+1. Make the model. Currently all important info is being played with inside the
+controller. DONE
+
+2. Find a better way to do the imports (redundant imports), and *maybe* 
+refactor so that the controller calls the GUI in main.py, not the other way 
+around.	DONE
+
+3. Find a better way to convert Riot's JSON names to my headers.
+
+4. Sort out the StringVar()/IntVar() issue. Currently all variables are 
+StringVar(), but that will be problematic for adding, etc. DONE (see 8.?)
+
+5. Currently pressing tab cycles you through each row in a column, instead of 
+vice-versa. Should be [S.Name]->[C.Name]->"Go!". Refactor code for this.
+
+6. In the controller, do I really want to be passing arguments continuously to
+the model's methods? The only alternatives I can currently think of would be
+to:
+
+(1) call each successive method in the current method:
+
+def _get_ranked_data(self, summoner_name, champ_name):
+
+	self.id = get-summoner-id
+	data = GrabRankedData(...self.id)
+	self._get_champ_stats(champ_name)
+
+def _get_champ_stats(self, summoner_name, champ_name):
+	etc.
+
+(2)	save persistent attributes, and call them in each method (i.e. arguments 
+already inside the method)
+
+controller.py:
+def _process_line(self, i):
+        [summoner_name, champ_name] = self.get_user_values(i)
+		self.model.take_these_vars(summoner_name, champ_name)
+        self.model._get_summoner_data()
+        self.model._get_ranked_data()
+        self.model._get_champ_stats()
+    
+model.py
+def 
+
+7. Deal with weird character encodings. DONE (need to test)
+not thorough - try: u'aet\xf8s'
+
+8. Find out how people do floats as (Tk.var()). Either:
+
+(1) Write a method to convert to float, do the maths, convert back to 
+StringVar()
+
+(2) Check for native methods for floats (because IntVar rounds).
+
+SORT OF DONE - DoubleVar() doesn't work for strings - i.e. "Prediction".
+
+9. Write appropriate try...except methods for invalid summoner names and 
+champion names. Requires changes to riotapi_py (get error codes: 404, 503, 
+etc.), LoLTeamCheckerGUI (appropriate message boxes), and 
+LoLTeamCheckerController (maybe a _catch_error() called in _process_line()?).
+
+More importantly, make sure things are handled in the appropriate places.
+(1) riotapi must return a riotapiexception. DONE
+(2) the MODEL must check for thrown/raised exceptions. DONE
+
+10. Reduce redundant api calls - i.e. if "Go" is pressed, and the summoner
+exists, then ranked stats will be saved in the Model. No need to recall the
+api when a legitimate champion (one that the summoner has played) has stats.
+DONE
+
+11. If a champ's stats are successfully called, the next unsuccessful champion
+call will not produce an error. Fix:
+(1) Make sure error message pops up.
+(2)	Reset all fields to "0".
+DONE
+
+12. IMPORTANT:
+Model needs to be restructured in terms of its try...except loops - i.e. they
+should stop after an exception.
+DONE
+
+13. Need a test suite for all possible conditions.
+
+14. Rework the model in terms of .data and .final_stats to accommodate:
+1. _get_summary_stats() fails if called multiple times because .final_stats
+will have dicts that have 'Total Games' and dicts that don't.
+2. Uniform naming across basic JSON stats and final stats, like 
+"totalSessionsPlayed" vs "Total Games" - EWAve is the issue
+3. If a player that was initially checked does not comprise the 5 now checked,
+make sure he isn't added to the totals, this actually applies to all players 
+looked up during the session. i.e. find a way to capture current state. DONE
+
+15. "get all stats" and "get summary stats" don't always work! FIXED,
+but sometimes (when?) don't update individual lines
+
+16. Add a boolean flag so that certain errors are only thrown (hence error
+boxes only pop up) when _process_line is accessed on its own, not via 
+_process_all. DONE DIFFERENTLY (no flag)
+
+17. Fix dicts, handling of _set_summary_values() or whatever it's called. 
+DONE?
+
+18. Write some tests/just test that EWA[KDA] is being worked out properly.
+
+19. It appears as if having multiple champs for one summoner messes up 
+calculations (first hypothesis: final_stats needs a [name] key, like:
+
+final_stats[summoner][champ][stats] (where stats is a list) instead of:
+
+final_stats[summoner][champ stats] (where champ_stats is the list)). DONE
+
+20. Rework EWAve and Ave, that shit is messed up.
+===============================================================================
+Small QOL Stuff:
+-------------------
+1. Make sure champion names can be entered into the GUI in a case insensitive
+form - i.e.:
+(1) convert the static data list stored locally into a list with one case,
+
+and, 
+(2) make sure the entry from the GUI gets converted before being checked.
+
+DONE - was harder, and implemented in a weirder way than I initially thought.
+
+So, maybe staticdata needs to have its dicts done in the form 
+{{name: "Amumu", "id": ??}, } so I can .lower() values instead of keys?)
+
+2. Write checks for region (currently LoLTeamCheckerController has "euw" 
+hardcoded for its self.api_instance...) DONE
+
+3. Make right, middle, label frames uniform in size (currently don't correspond
+to label head sizes).
+
+4. Make fonts smaller, pad for size, etc.
+
+5. Automate frame indexing (i.e. don't call self.frames[explicit number]).
+
+6. Sort out option menu for regions - lock size, make a better drop-down? DONE
+
+7. Use a version of print "{y:2f}".format(y=0.13452) instead of explicit 
+rounding?
+
+8. Edit all rehashing dictionary lookups, change from:
+for k in d:
+    print k, d[k]
+	
+to:
+for k, v in d.items():
+    print k, v
+
+9. Sort out sub-framing of summary frame.	
+
+10. Make sure summoner names have a case-insensitive feature, i.e. 
+if "NadsOfMahen" has been searched, don't re-lookup "nadsofmahen" if entered.
+Best way is probably to change all storage(like .model.data and 
+.model.final_stats), and checks (if summoner in .model.data, etc.), into 
+lower-case versions.
+	
+Misc.:
+
+1. Create all frames [x]
+===============================================================================
+Things I learned/to ponder:
+---------------------------
+1. Mixing dicts, lists:
+One of the more annoying issues I had was finding a way to capture the current
+5 names of summoners and champs, and use comprehensions when those 5 summoner 
+names weren't unique (i.e. 5 of the same person). The method to grab the names 
+would return a list, [x, x, x, x, x]. But the different champs for that 
+summoner (x) would be stored as:
+
+.model.final_stats[x][champ_a],
+.model.final_stats[x][champ_b], etc.
+
+So if I wanted the total number of games for the rare case of one summoner, 
+using a sum over the list comprehension:
+
+num_games = sum([[name][champ]['Games'] for name in names for champ in champs])
+
+would find .model.final_stats[x][champ_a]...[champ_b], then iterate over the 
+length of the name list [x, x, x, x, x]. Since this is a unique case, and a 
+rare one, I could have written a special catch, but I did it using zip. That
+way, I preserved the original name gets as lists, not dicts 
+(i.e. {x, x, x, x, x}).
