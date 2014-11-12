@@ -1,7 +1,6 @@
 # Ranked stats data sorter/parser
 
 from __future__ import division # must be first import
-##from staticdata import GrabStaticData
 
 class GrabRankedData:
     """Converts and returns json/dict data requested from the Riot API

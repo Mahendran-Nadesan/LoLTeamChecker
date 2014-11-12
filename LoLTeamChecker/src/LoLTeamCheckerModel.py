@@ -6,7 +6,8 @@ Retrieves, and stores data retrieved by the API and manipulates them
 as needed. Called by the controller."""
 from __future__ import division # must be first import
 ##from LoLTeamCheckerController import LoLTeamCheckerController
-from riotapi_py import *
+#from riotapi_py import *
+from lolteamchecker_proxyhelper_clientside import *
 from rankeddata import GrabRankedData
 from staticdata import GrabStaticData
 from collections import Counter
@@ -19,14 +20,15 @@ class LoLTeamCheckerModel:
         self.team_data = {}
         self.summoners = {}
         self.final_stats = {}
-        self.api_key = "e20154f8-3601-40ac-ae35-5af13e62cc8c" 
+        #self.api_key = "e20154f8-3601-40ac-ae35-5af13e62cc8c" 
         self.region = region
-        self.versions = {"gsbn": "v1.4", "gsbid": "v1.4", "ggbid":
-                         "v1.3", "grsbid": "v1.3", "sgcbid": "v1.2",
-                         "gmhbid": "v2.2"} 
-        self.api_instance = RiotApiPy(self.api_key, self.versions,
-                                      self.region)
-        self.champdata = self.api_instance.static_get_champion_list()
+        #self.versions = {"gsbn": "v1.4", "gsbid": "v1.4", "ggbid":
+        #                 "v1.3", "grsbid": "v1.3", "sgcbid": "v1.2",
+        #                 "gmhbid": "v2.2"} 
+        #self.api_instance = RiotApiPy(self.api_key, self.versions,
+        #                              self.region)
+        self.proxy_instance = LoLTeamCheckerProxyHelper(self.region)
+        self.champdata = self.proxy_instance.static_get_champion_list()
         self.staticdata = GrabStaticData(self.champdata)
 
     def _add_args(self, summoner_name, champ_name):
@@ -40,7 +42,8 @@ class LoLTeamCheckerModel:
         print self.summoner_name
         print "stuff is happening..."
         # Is there a better way to do the encoding issue?
-        self.summoners[self.summoner_name] = self.api_instance.get_summoners_by_name(self.summoner_name.encode('utf-8'), self.region)
+        #self.summoners[self.summoner_name] = self.proxy_instance.get_summoners_by_name(self.summoner_name.encode('utf-8'), self.region)
+        self.summoners[self.summoner_name] = self.proxy_instance.get_summoner_by_name(self.summoner_name.encode('utf-8'))
 
     def _make_data_relevant(self):
         self.data[self.summoner_name].make_relevant(self.data[self.summoner_name].get_stats_by_champid(self.staticdata.get_champid(self.champ_name)))
@@ -54,7 +57,7 @@ class LoLTeamCheckerModel:
         self.data[self.summoner_name] = {}
 ##        self.final_stats[self.summoner_name]= Counter({})
         summoner_id = str(self.summoners[self.summoner_name][(self.summoner_name.replace(" ", "")).lower()]['id'])
-        self.data[self.summoner_name] = GrabRankedData(self.api_instance.get_ranked_stats_by_summoner_id(summoner_id, 4))
+        self.data[self.summoner_name] = GrabRankedData(self.proxy_instance.get_ranked_stats_by_summoner_id(summoner_id))
 
     def _get_champ_stats(self, summoner_name, champ_name):
         """Method for getting all relevant stats for summoner/champ
@@ -207,14 +210,10 @@ class LoLTeamCheckerModel:
                 if champ in self.final_stats[name]:
                     if self.final_stats[name][champ]['Games'] is not 0:
                         self.data_pairs.append((name, champ))
-                         
-                    
 
-
-            
     def _update(self):
         """Updates when the region is not the default."""
-        self.api_instance = RiotApiPy(self.api_key, self.versions, self.region)
+        self.proxy_instance = LoLTeamCheckerProxyHelper(self.region)
         # Don't reload static champ list, assume they're the same
         # across regions.
         

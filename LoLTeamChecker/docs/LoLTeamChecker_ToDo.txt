@@ -1,0 +1,35 @@
+LoLTeamChecker To Do List
+
+
+Client-Side
+------------
+
+1. Rewrite exception in ProxyHelper.send_request(...)
+Current tracebacks read:
+Traceback (most recent call last):
+  File "<pyshell#6>", line 1, in <module>
+    a.get_ranked_stats_by_summoner_id('jasf')
+  File "C:\Users\Mahen\workspace\LoLTeamChecker\LoLTeamChecker\src\lolteamchecker_proxyhelper_clientside.py", line 32, in get_ranked_stats_by_summoner_id
+    return self.send_request('ranked/{summoner_id}'.format(summoner_id=summoner_id))
+  File "C:\Users\Mahen\workspace\LoLTeamChecker\LoLTeamChecker\src\lolteamchecker_proxyhelper_clientside.py", line 26, in send_request
+    raise self.error
+TypeError: exceptions must be old-style classes or derived from BaseException, not int
+
+2. Find out why running LoLTeamChecker.py in IDE works, but > python LoLTeamChecker.py in PowerShell returns:
+Traceback (most recent call last):
+  File ".\LoLTeamChecker.py", line 22, in <module>
+    my_gui = LoLTeamCheckerGUI()
+  File "C:\Users\Mahen\workspace\LoLTeamChecker\LoLTeamChecker\src\LoLTeamCheckerGUI.py", line 20, in __init__
+    tk.Frame.__init__(self)
+  File "C:\Python27\Lib\lib-tk\Tkinter.py", line 2515, in __init__
+    Widget.__init__(self, master, 'frame', cnf, {}, extra)
+  File "C:\Python27\Lib\lib-tk\Tkinter.py", line 2027, in __init__
+    BaseWidget._setup(self, master, cnf)
+  File "C:\Python27\Lib\lib-tk\Tkinter.py", line 2002, in _setup
+    _default_root = Tk()
+  File "C:\Python27\Lib\lib-tk\Tkinter.py", line 1745, in __init__
+    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)
+_tkinter.TclError: Can't find a usable init.tcl in the following directories:
+    C:/Python27/lib/tcl8.5 C:/Users/Mahen/workspace/LoLTeamChecker/lib/tcl8.5 C:/Users/Mahen/workspace/lib/tcl8.5 C:/Use
+rs/Mahen/workspace/LoLTeamChecker/library C:/Users/Mahen/workspace/library C:/Users/Mahen/workspace/tcl8.5.2/library C:/
+Users/Mahen/tcl8.5.2/library

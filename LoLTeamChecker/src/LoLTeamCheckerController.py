@@ -2,10 +2,8 @@
 
 Controls calls to GUI and the data model."""
 
-
-
 class LoLTeamCheckerController:
-    """Handles calls to the model, Riot API, and the GUI."""
+    """Handles calls to the model, proxy, and the GUI."""
     def __init__(self, gui, model): #, model, 
         """Initialises model and GUI to control."""
         self.gui = gui

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-"""The GUI for LoLTeamChecker
-dzień świra
+"""
+The GUI for LoLTeamChecker
+
 The GUI has rows for each champ, allowing for entry of summoner name
 and champion. When appropriate buttons are pressed, average/relevant
 data is returned."""
@@ -337,10 +338,3 @@ class LoLTeamCheckerGUI(tk.Frame):
         self.error_message = tk.Message(self.error_frame, text=error_code)
         self.error_message.grid(column=0, row=0, sticky="ew")
 
-
-
-        
-    
-                             
-            
-        
