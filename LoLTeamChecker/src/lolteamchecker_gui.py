@@ -65,6 +65,7 @@ class LoLTeamCheckerGUI(tk.Frame):
 #        top.rowconfigure(0, weight=1)
         top.rowconfigure(1, weight=1)
         top.rowconfigure(2, weight=2)
+        top.rowconfigure(3, weight=2)
 #        self.columnconfigure(0, weight=1)
 #        self.columnconfigure(1, weight=1)
 #        self.rowconfigure(0, weight=0)
@@ -78,7 +79,7 @@ class LoLTeamCheckerGUI(tk.Frame):
 
     def _create_left_name_frame(self, headers):
         """Creates a left, top, frame, for the name headers."""
-        self.frames.append(tk.LabelFrame(self.master))  #, bg="red"))
+        self.frames.append(tk.LabelFrame(self.master))
         self.labels.append([])
 
         for i, name in enumerate(headers):
@@ -95,20 +96,20 @@ class LoLTeamCheckerGUI(tk.Frame):
         # x = Label(parent, ...) {parent=LabelFrame}
         # x.grid(column_in_parent, row_in_parent)
 
-        self.frames[0].grid(column=0, row=0, sticky="ew", columnspan=1)
+        self.frames[0].grid(column=0, row=0, sticky="ew", columnspan=1, padx=10, pady=10)
 
     def _create_right_name_frame(self, headers):
         """Creates a right, top, frame for the data headers."""
 
-        self.frames.append(tk.LabelFrame(self.master))  #, bg="blue"))
+        self.frames.append(tk.LabelFrame(self.master))
         self.labels.append([])
 
         for i, name in enumerate(headers):
             self.labels[1].append(tk.Label(self.frames[1], text=name,
                                            relief="sunken"))
             self.labels[1][i].grid(column=i, row=0, sticky="ew")
-            self.frames[1].columnconfigure(i, weight=1, minsize=50)
-        self.frames[1].grid(column=2, row=0, sticky="ew")
+            self.frames[1].columnconfigure(i, weight=1, minsize=60)
+        self.frames[1].grid(column=2, row=0, sticky="ew", padx=10, pady=10)
 
     def _create_mid_region_frame(self):
         """Creates a middle, top, frame, which Will list the regions
@@ -119,15 +120,14 @@ class LoLTeamCheckerGUI(tk.Frame):
         self.option_menu = tk.OptionMenu(self.frames[5], self.region_option,
                                          "euw", "na", "eune")
         self.option_menu.grid(sticky="ew")
-
-        self.frames[5].grid(column=1, row=0, sticky="ns")
+        self.frames[5].grid(column=1, row=0, sticky="ns", pady=10)
         self.frames[5].columnconfigure(0, weight=1)
 
     def _create_left_info_frame(self, headers):
         """Creates a left, middle, frame, with 5 entry widgets, which
         the user will fill."""
 
-        self.frames.append(tk.Frame(self.master))  #, bg="green"))
+        self.frames.append(tk.Frame(self.master))
         self.entries.append([])
 
         for column, name in enumerate(headers):
@@ -139,19 +139,20 @@ class LoLTeamCheckerGUI(tk.Frame):
                                                 textvariable=self.
                                                 user_values[name][row]))
                 self.entries[0][(column*5)+row].grid(column=column,
-                                                     row=row, sticky="ew")
+                                                     row=row, sticky="nesw", pady=10)
                 self.frames[2].rowconfigure(row, weight=1, minsize=50)
-        self.frames[2].grid(column=0, row=1, sticky="ew")
+        self.frames[2].grid(column=0, row=1, sticky="ew", padx=10, pady=5)
 
     def _create_button_frame(self):
         """Creates a middle, middle, frame, with a "Go!" button."""
 
-        self.frames.append(tk.Frame(self.master))  #, bg="yellow"))
+        self.frames.append(tk.Frame(self.master))
         self.row_buttons.append([])
 
         for row in range(5):
-            self.row_buttons[0].append(tk.Button(self.frames[3], text="Go"))
-            self.row_buttons[0][row].grid(column=0, row=row, sticky="ns")
+            self.row_buttons[0].append(tk.Button(self.frames[3],
+                                       text="Go", height=2, width=4))
+            self.row_buttons[0][row].grid(column=0, row=row)
             self.frames[3].rowconfigure(row, weight=1, minsize=50)
 
         self.frames[3].grid(column=1, row=1, sticky="ew")
@@ -161,11 +162,11 @@ class LoLTeamCheckerGUI(tk.Frame):
         """Creates a right, middle, frame, with "empty" labels for the
         data."""
 
-        self.frames.append(tk.Frame(self.master))  #, bg="blue"))
+        self.frames.append(tk.Frame(self.master))
         self.labels.append([])
 
         for column, name in enumerate(headers):
-            self.frames[4].columnconfigure(column, weight=1, minsize=50)
+            self.frames[4].columnconfigure(column, weight=1, minsize=60)
             self.header_values[name] = []
             for row in range(5):
                 if column == 9:
@@ -180,9 +181,9 @@ class LoLTeamCheckerGUI(tk.Frame):
                                                header_values[name]
                                                [row], relief="ridge"))
                 self.labels[2][(column*5)+row].grid(column=column, row=row,
-                                                    sticky="ew")
+                                                    sticky="nsew", padx=8, pady=10)
                 self.frames[4].rowconfigure(row, weight=1, minsize=50)
-        self.frames[4].grid(column=2, row=1, sticky="ew")
+        self.frames[4].grid(column=2, row=1, sticky="ew", padx=10, pady=10)
 
     def _create_mid_summary_frame(self):
         """Creates mid summary frame which provides the labels for the
@@ -197,17 +198,18 @@ class LoLTeamCheckerGUI(tk.Frame):
         self.mid_summary.grid(column=1, row=0, sticky="ew")
         # Create right frame with labels within
         self.right_summary = tk.Frame(self.frames[7])
-        self.right_summary.grid(column=2, row=0)
+        self.right_summary.grid(column=2, row=0, sticky="ns")
         self.labels.append([])
         self.labels[3].append(tk.Label(self.right_summary,
                                        text="Eq. Weight Ave", relief="ridge"))
-        self.labels[3][0].grid(column=0, row=0, sticky="e")
+        self.labels[3][0].grid(column=0, row=0, sticky="ns", padx=5, pady=5)
         self.labels[3].append(tk.Label(self.right_summary, text="Average",
                                        relief="ridge"))
-        self.labels[3][1].grid(column=0, row=1, sticky="e")
-        self.frames[7].columnconfigure(0, weight=1)
-        self.frames[7].columnconfigure(1, weight=1)
-        self.frames[7].columnconfigure(2, weight=1)
+        self.labels[3][1].grid(column=0, row=1, sticky="ns", padx=5, pady=5)
+        #self.frames[7].columnconfigure(0, weight=1)
+        #self.frames[7].rowconfigure(0, minsize=60)
+        #self.frames[7].columnconfigure(1, weight=1)
+        #self.frames[7].columnconfigure(2, weight=1)
 
     def _create_left_summary_frame(self):
         """Creates the summary frame, bottom, total, frame."""
@@ -216,7 +218,7 @@ class LoLTeamCheckerGUI(tk.Frame):
         self.getall_button = (tk.Button(self.frames[6],
                                         text="All Indiv stats"))
         self.getall_button.grid(column=0, row=0, sticky="nesw")
-        self.go_button = (tk.Button(self.frames[6], text="Summary Stats"))
+        self.go_button = (tk.Button(self.frames[6], text="Team Stats"))
         self.go_button.grid(column=1, row=0, sticky="nesw")
         self.frames[6].columnconfigure(0, weight=1)
         self.frames[6].columnconfigure(1, weight=1)
@@ -228,8 +230,10 @@ class LoLTeamCheckerGUI(tk.Frame):
 
         for row_number, row in enumerate(self.summary_values.keys()):
             self.summary_values[row] = {}
+            self.frames[8].rowconfigure(row_number, weight=1, minsize=40)
             for column, name in enumerate(self.default_values['rn']):
                 self.frames[8].columnconfigure(column, weight=1, minsize=50)
+                # self.frames[8].rowconfigure()
                 if column == 9:
                     self.summary_values[row][name] = tk.StringVar()
                 else:
@@ -240,8 +244,10 @@ class LoLTeamCheckerGUI(tk.Frame):
                     tk.Label(self.frames[8], textvariable=self.summary_values
                              [row][name], relief="ridge"))
                 self.labels[4][(row_number*10)+column].grid(
-                    column=column, row=row_number, sticky="ew")
-        self.frames[8].grid(column=2, row=2, sticky="ew")
+                    column=column, row=row_number, sticky="nsew", padx=3, pady=3)
+                #self.labels[4][(row_number*10)+column].rowconfigure(row_number, minsize=100)
+
+        self.frames[8].grid(column=2, row=2, sticky="nesw", pady=10, padx=10)
 
     def _set_right_info_row_values(self, row, values):
         """Takes a values dict from the controller, and lays it into
@@ -277,7 +283,6 @@ class LoLTeamCheckerGUI(tk.Frame):
 
     def _show_error_message(self, error_code):
         """Method for creating error message boxes."""
-        print error_code
         self.error_box = tk.Toplevel()
         self.error_box.title("Error!")
         self.error_frame = tk.Frame(self.error_box)

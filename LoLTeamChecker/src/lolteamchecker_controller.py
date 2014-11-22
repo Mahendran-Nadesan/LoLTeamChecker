@@ -48,11 +48,10 @@ class LoLTeamCheckerController:
                 self.model._get_champ_stats(pair[0], pair[1])
             except:
                 pass
-# self.gui._show_error_message(self.model.error)
-
             if pair[0] in self.model.final_stats:
                 print
-                print "Setting values for {s}: {c}.".format(s=pair[0], c=pair[1])
+                print "Setting values for {s}: {c}.".format(s=pair[0],
+                                                            c=pair[1])
                 print "Values are: ", self.model.final_stats[pair[0]][pair[1]]
                 print
                 self.gui._set_right_info_row_values(
@@ -61,13 +60,10 @@ class LoLTeamCheckerController:
     def _process_summary(self):
         """Runs the methods for processing the average/summary
         pane."""
-        print "in process summary"
         self._process_all()
-        print "getting summary stats"
         if len(self.gui._get_all_summoners()) != 0:
             self.model._get_summary_stats(self.gui._get_all_summoners(),
                                           self.gui._get_all_champs())
-            print "setting summary stats"
             self.gui._set_summary_values(self.model.ave_stats['EWAve'],
                                          self.model.ave_stats['Ave'])
 

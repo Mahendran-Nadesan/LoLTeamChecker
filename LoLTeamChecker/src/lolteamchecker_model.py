@@ -40,8 +40,7 @@ class LoLTeamCheckerModel:
         print "stuff is happening..."
         # Is there a better way to do the encoding issue?
         # Only finds ONE summoner's details.
-        self.summoners[self.summoner_name] = self.proxy_instance.
-        get_summoner_by_name(self.summoner_name.encode('utf-8'))
+        self.summoners[self.summoner_name] = self.proxy_instance.get_summoner_by_name(self.summoner_name.encode('utf-8'))
 
     def _make_data_relevant(self):
         """Insert docstring."""
@@ -74,8 +73,7 @@ class LoLTeamCheckerModel:
         if self.summoner_name is "":
             self.error = "No summoner name entered."
             raise self.error
-        if self.summoner_name not in self.summoners and
-        self.summoner_name is not "":
+        if self.summoner_name not in self.summoners and (self.summoner_name is not ""):
             try:
                 print "trying..._get_summoner_data()"
                 self._get_summoner_data()
@@ -97,12 +95,15 @@ class LoLTeamCheckerModel:
                 print "making final_stats[{s}]".format(s=self.summoner_name)
                 self.final_stats[self.summoner_name] = {}
             try:
-                self.champ_id = [self.staticdata.champs_by_name[i] for i in
-                                 self.staticdata.champs_by_name if i.lower() ==
-                                 self.champ_name.lower()]
-                or [self.staticdata.champ_list[i]['id'] for i in
-                    self.staticdata.champ_list.keys() if i.lower() ==
-                    self.champ_name.lower()]
+                self.champ_id = [self.staticdata.champs_by_name[i]
+                                 for i in self.staticdata.champs_by_name
+                                 if i.lower() ==
+                                 self.champ_name.lower()] or [
+                                     self.staticdata.champ_list[i]['id']
+                                     for i in
+                                     self.staticdata.champ_list.keys()
+                                     if i.lower() ==
+                                     self.champ_name.lower()]
                 self.champ_id = self.champ_id.pop(0)  # There must be a better
                 # way to do this
                 self.data[self.summoner_name].make_relevant(
