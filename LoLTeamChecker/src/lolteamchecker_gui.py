@@ -252,6 +252,8 @@ class LoLTeamCheckerGUI(tk.Frame):
     def _set_right_info_row_values(self, row, values):
         """Takes a values dict from the controller, and lays it into
         those labels."""
+        print "Row is ", row
+        print "Values are ", values
         for name in values.keys():
             self.header_values[name][row].set(values[name])
 

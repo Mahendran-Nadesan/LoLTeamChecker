@@ -40,7 +40,8 @@ class LoLTeamCheckerModel:
         print "stuff is happening..."
         # Is there a better way to do the encoding issue?
         # Only finds ONE summoner's details.
-        self.summoners[self.summoner_name] = self.proxy_instance.get_summoner_by_name(self.summoner_name.encode('utf-8'))
+        self.summoners[self.summoner_name] = self.proxy_instance.get_summoner_by_name(
+            self.summoner_name.encode('utf-8'))
 
     def _make_data_relevant(self):
         """Insert docstring."""
@@ -111,14 +112,13 @@ class LoLTeamCheckerModel:
                         self.champ_id))
                 self.data[self.summoner_name].get_averages(
                     self.data[self.summoner_name].relevant_stats)
-                self.final_stats[self.summoner_name][self.champ_name] = Counter
-                (self.data[self.summoner_name].convert())
+                self.final_stats[self.summoner_name][self.champ_name] = Counter(
+                    self.data[self.summoner_name].convert())
             except:
                 print "in exception section of data loop..."
                 self.error = "No data for champ"
-                self.final_stats[self.summoner_name][self.champ_name] = Counter
-                ({k: 0 for k in self.data[self.summoner_name]
-                  .converted_stats_names})
+                self.final_stats[self.summoner_name][self.champ_name] = Counter(
+                    {k: 0 for k in self.data[self.summoner_name].converted_stats_names})
                 raise self.error
         print "it got to the end...!"
 

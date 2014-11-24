@@ -2,6 +2,14 @@
 ## [e] = existing (i.e. real summoner, and champ they have ranked
 ## stats with. [n] = nonexisting
 
+#from LoLTeamChecker import 
+import nose
+#import lolteamchecker_model
+#import lolteamchecker_gui
+from LoLTeamChecker.src.lolteamchecker_gui import LoLTeamCheckerGUI
+from LoLTeamChecker.src.lolteamchecker_controller import LoLTeamCheckerController
+from LoLTeamChecker.src.lolteamchecker_rankeddataparser import GrabRankedData
+from LoLTeamChecker.src.lolteamchecker_staticdataparser import GrabStaticData
 
 # 1. Tests for successful "Go" command
 
